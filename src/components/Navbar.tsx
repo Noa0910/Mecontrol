@@ -33,7 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           
           <div className="status-indicator">
             <Database className="w-4 h-4" />
-            <span>MySQL</span>
+            <span>Supabase</span>
           </div>
         </div>
       </div>

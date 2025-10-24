@@ -42,15 +42,13 @@ app.get('/api/estadisticas', async (req, res) => {
       atencionesHoy,
       totalDepartamentos,
       totalMunicipios,
-      totalDiagnosticos,
-      ultimaActualizacion
+      totalDiagnosticos
     ] = await Promise.all([
       query('SELECT COUNT(*) as total FROM atenciones_urgencias'),
       query('SELECT COUNT(*) as total FROM atenciones_urgencias WHERE DATE(fecha_atencion) = CURRENT_DATE'),
       query('SELECT COUNT(*) as total FROM departamentos'),
       query('SELECT COUNT(*) as total FROM municipios'),
-      query('SELECT COUNT(*) as total FROM diagnosticos'),
-      query('SELECT * FROM actualizaciones ORDER BY fecha_actualizacion DESC LIMIT 1')
+      query('SELECT COUNT(*) as total FROM diagnosticos')
     ]);
 
     res.json({
@@ -59,7 +57,7 @@ app.get('/api/estadisticas', async (req, res) => {
       totalDepartamentos: parseInt(totalDepartamentos[0]?.total || 0),
       totalMunicipios: parseInt(totalMunicipios[0]?.total || 0),
       totalDiagnosticos: parseInt(totalDiagnosticos[0]?.total || 0),
-      ultimaActualizacion: ultimaActualizacion[0] || null
+      ultimaActualizacion: null
     });
   } catch (error) {
     console.error('Error obteniendo estadísticas:', error);
