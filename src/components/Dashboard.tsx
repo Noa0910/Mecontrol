@@ -10,7 +10,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { api } from '../services/api';
+import { api } from '../services/supabaseApi';
 
 interface Estadisticas {
   totalAtenciones: number;

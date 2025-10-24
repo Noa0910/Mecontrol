@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Search, Stethoscope } from 'lucide-react';
-import { api, Diagnostico } from '../services/api';
+import { api, Diagnostico } from '../services/supabaseApi';
 
 const COLORS = ['#667eea', '#4ade80', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
@@ -130,7 +130,7 @@ export const DiagnosticosPage: React.FC = () => {
         <div className="card">
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">
-              {diagnosticosFiltrados.reduce((sum, d) => sum + d.total_atenciones, 0).toLocaleString()}
+              {diagnosticosFiltrados.reduce((sum, d) => sum + (d.total_atenciones || 0), 0).toLocaleString()}
             </div>
             <div className="text-sm text-gray-600">Total atenciones</div>
           </div>
@@ -188,7 +188,7 @@ export const DiagnosticosPage: React.FC = () => {
                   categoria: cat,
                   cantidad: diagnosticosFiltrados
                     .filter(d => d.categoria_diagnostico === cat)
-                    .reduce((sum, d) => sum + d.total_atenciones, 0)
+                    .reduce((sum, d) => sum + (d.total_atenciones || 0), 0)
                 }))}
                 cx="50%"
                 cy="50%"
@@ -251,7 +251,7 @@ export const DiagnosticosPage: React.FC = () => {
                   </span>
                 </td>
                 <td className="text-center font-bold">
-                  {diag.total_atenciones.toLocaleString()}
+                  {(diag.total_atenciones || 0).toLocaleString()}
                 </td>
                 <td className="text-center">
                   <div className="flex items-center gap-2">

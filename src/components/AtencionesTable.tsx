@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Download, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
-import { api, Atencion, PaginationInfo } from '../services/api';
+import { api, Atencion, PaginationInfo } from '../services/supabaseApi';
 
 export const AtencionesTable: React.FC = () => {
   const [atenciones, setAtenciones] = useState<Atencion[]>([]);

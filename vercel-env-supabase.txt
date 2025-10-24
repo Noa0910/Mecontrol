@@ -1,0 +1,8 @@
+# Variables de entorno para Vercel con Supabase PostgreSQL
+NODE_ENV=production
+REACT_APP_API_URL=/api
+DB_HOST=db.jikjuutgacyzlxiczrrh.supabase.co
+DB_USER=postgres
+DB_PASSWORD=JX71EllZRtUC8oiJ
+DB_PORT=5432
+DB_NAME=postgres

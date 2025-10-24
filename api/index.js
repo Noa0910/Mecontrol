@@ -8,12 +8,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Configuración de la base de datos PostgreSQL con Session Pooler
+// Configuración de la base de datos Supabase PostgreSQL
 const dbConfig = {
-  host: process.env.DB_HOST || 'aws-0-us-west-1.pooler.supabase.com',
-  user: process.env.DB_USER || 'postgres.jikjuutgacyzlxiczrrh',
+  host: process.env.DB_HOST || 'db.jikjuutgacyzlxiczrrh.supabase.co',
+  user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'JX71EllZRtUC8oiJ',
-  port: process.env.DB_PORT || 6543,
+  port: process.env.DB_PORT || 5432,
   database: process.env.DB_NAME || 'postgres',
   ssl: { rejectUnauthorized: false }
 };

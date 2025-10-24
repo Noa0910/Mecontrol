@@ -1,0 +1,8 @@
+# Variables de entorno para desarrollo local con Supabase Session Pooler
+NODE_ENV=development
+REACT_APP_API_URL=http://localhost:5000/api
+DB_HOST=aws-0-us-west-1.pooler.supabase.com
+DB_USER=postgres.jikjuutgacyzlxiczrrh
+DB_PASSWORD=JX71EllZRtUC8oiJ
+DB_PORT=6543
+DB_NAME=postgres

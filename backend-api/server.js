@@ -1,5 +1,5 @@
 const express = require('express');
-const { Pool } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
 const path = require('path');
 
@@ -11,26 +11,33 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../build')));
 
-// Configuración de la base de datos Supabase PostgreSQL
-const dbConfig = {
-  host: process.env.DB_HOST || 'db.jikjuutgacyzlxiczrrh.supabase.co',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'JX71EllZRtUC8oiJ',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'postgres',
-  ssl: { rejectUnauthorized: false }
-};
+// Configuración de Supabase
+const supabaseUrl = process.env.SUPABASE_URL || 'https://jikjuutgacyzlxiczrrh.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa2p1dXRnYWN5emx4aWN6cnJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEzMjM4MjksImV4cCI6MjA3Njg5OTgyOX0.gFsKJ8z23cWS4asH12UCFAL4KCQMwz3tuFI_wyPdqbU';
 
-// Pool de conexiones PostgreSQL
-const pool = new Pool(dbConfig);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Función para ejecutar consultas PostgreSQL
-const query = async (sql, params = []) => {
+// Función para ejecutar consultas usando Supabase
+const query = async (table, select = '*', filters = {}) => {
   try {
-    const result = await pool.query(sql, params);
-    return result.rows;
+    let query = supabase.from(table).select(select);
+    
+    // Aplicar filtros si existen
+    Object.keys(filters).forEach(key => {
+      if (filters[key] !== undefined && filters[key] !== null) {
+        query = query.eq(key, filters[key]);
+      }
+    });
+    
+    const { data, error } = await query;
+    
+    if (error) {
+      throw error;
+    }
+    
+    return data;
   } catch (err) {
-    console.error('Error en consulta SQL:', err);
+    console.error('Error en consulta Supabase:', err);
     throw err;
   }
 };
@@ -332,7 +339,7 @@ app.get('*', (req, res) => {
 // Iniciar servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor API ejecutándose en puerto ${PORT}`);
-  console.log(`📊 Base de datos: ${dbConfig.database}@${dbConfig.host}:${dbConfig.port}`);
+  console.log(`📊 Base de datos: Supabase PostgreSQL`);
   console.log(`🌐 Frontend disponible en: http://localhost:${PORT}`);
 });
 

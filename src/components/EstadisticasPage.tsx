@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Area, AreaChart } from 'recharts';
 import { TrendingUp, Users, MapPin, Activity } from 'lucide-react';
-import { api, DepartamentoStats, Demograficas, EvolucionTemporal } from '../services/api';
+import { api, DepartamentoStats, Demograficas, EvolucionTemporal } from '../services/supabaseApi';
 
 const COLORS = ['#667eea', '#4ade80', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
@@ -325,7 +325,7 @@ export const EstadisticasPage: React.FC = () => {
             <div className="card">
               <div className="text-center">
                 <div className="text-3xl font-bold text-blue-600">
-                  {evolucion.length > 0 ? evolucion[0].total_atenciones.toLocaleString() : 0}
+                  {evolucion.length > 0 ? evolucion[0].cantidad.toLocaleString() : 0}
                 </div>
                 <div className="text-sm text-gray-600">Atenciones hoy</div>
               </div>
@@ -333,7 +333,7 @@ export const EstadisticasPage: React.FC = () => {
             <div className="card">
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-600">
-                  {evolucion.length > 0 ? evolucion[0].edad_promedio.toFixed(1) : 0}
+                  {evolucion.length > 0 ? 'N/A' : 0}
                 </div>
                 <div className="text-sm text-gray-600">Edad promedio hoy</div>
               </div>
