@@ -1,19 +1,13 @@
 {
   "version": 2,
   "name": "medcontrol",
-  "builds": [
-    {
-      "src": "frontend-morbilidad/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build"
-      }
-    },
-    {
-      "src": "backend-api/server.js",
-      "use": "@vercel/node"
+  "buildCommand": "cd frontend-morbilidad && npm install && npm run build",
+  "outputDirectory": "frontend-morbilidad/build",
+  "functions": {
+    "backend-api/server.js": {
+      "runtime": "nodejs18.x"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/api/(.*)",
@@ -21,7 +15,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend-morbilidad/$1"
+      "dest": "/frontend-morbilidad/build/$1"
     }
   ],
   "env": {

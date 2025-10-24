@@ -1,0 +1,11 @@
+{
+  "env": {
+    "NODE_ENV": "production",
+    "DB_HOST": "your-database-host",
+    "DB_USER": "your-database-user",
+    "DB_PASSWORD": "your-database-password",
+    "DB_PORT": "3306",
+    "DB_NAME": "morbilidad_urgencias",
+    "REACT_APP_API_URL": "/api"
+  }
+}
