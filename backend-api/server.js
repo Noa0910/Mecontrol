@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend-morbilidad/build')));
+app.use(express.static(path.join(__dirname, '../build')));
 
 // Configuración de la base de datos PostgreSQL
 const dbConfig = {
@@ -326,7 +326,7 @@ app.get('/api/powerbi/datos', async (req, res) => {
 
 // Servir la aplicación React
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend-morbilidad/build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../build', 'index.html'));
 });
 
 // Iniciar servidor
