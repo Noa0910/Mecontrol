@@ -1,5 +1,5 @@
 const express = require('express');
-const mysql = require('mysql2');
+const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
 
@@ -11,24 +11,24 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../build')));
 
-// Configuración de la base de datos MySQL Aiven
+// Configuración de la base de datos Supabase PostgreSQL
 const dbConfig = {
-  host: process.env.DB_HOST || 'mysql-1d1d642c-ayntecnology09-c9f0.f.aivencloud.com',
-  user: process.env.DB_USER || 'avnadmin',
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT || 28195,
-  database: process.env.DB_NAME || 'defaultdb',
+  host: process.env.DB_HOST || 'db.jikjuutgacyzlxiczrrh.supabase.co',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'JX71EllZRtUC8oiJ',
+  port: process.env.DB_PORT || 5432,
+  database: process.env.DB_NAME || 'postgres',
   ssl: { rejectUnauthorized: false }
 };
 
-// Pool de conexiones MySQL
-const pool = mysql.createPool(dbConfig);
+// Pool de conexiones PostgreSQL
+const pool = new Pool(dbConfig);
 
-// Función para ejecutar consultas MySQL
+// Función para ejecutar consultas PostgreSQL
 const query = async (sql, params = []) => {
   try {
-    const [rows] = await pool.promise().execute(sql, params);
-    return rows;
+    const result = await pool.query(sql, params);
+    return result.rows;
   } catch (err) {
     console.error('Error en consulta SQL:', err);
     throw err;
