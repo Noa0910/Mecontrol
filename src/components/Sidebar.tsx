@@ -5,7 +5,8 @@ import {
   Users, 
   BarChart3, 
   Stethoscope, 
-  Database
+  Database,
+  Search
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
@@ -35,6 +36,12 @@ export const Sidebar: React.FC = () => {
       icon: Stethoscope,
       label: 'Diagnósticos',
       description: 'Top diagnósticos'
+    },
+    {
+      path: '/consultas',
+      icon: Search,
+      label: 'Consultas Avanzadas',
+      description: 'Filtros y análisis personalizado'
     }
   ];
 

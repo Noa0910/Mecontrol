@@ -4,6 +4,7 @@ import { Dashboard } from './components/Dashboard';
 import { AtencionesTable } from './components/AtencionesTable';
 import { EstadisticasPage } from './components/EstadisticasPage';
 import { DiagnosticosPage } from './components/DiagnosticosPage';
+import ConsultasPage from './components/ConsultasPage';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import './App.css';
@@ -21,6 +22,7 @@ function App() {
               <Route path="/atenciones" element={<AtencionesTable />} />
               <Route path="/estadisticas" element={<EstadisticasPage />} />
               <Route path="/diagnosticos" element={<DiagnosticosPage />} />
+              <Route path="/consultas" element={<ConsultasPage />} />
             </Routes>
           </main>
         </div>
