@@ -73,8 +73,8 @@ export const Dashboard: React.FC = () => {
         ]);
         
         setEstadisticas(estats);
-        setDepartamentos(deptos.slice(0, 10)); // Top 10 departamentos
-        setDemograficas(demo);
+        setDepartamentos(Array.isArray(deptos) ? deptos.slice(0, 10) : []); // Top 10 departamentos
+        setDemograficas(demo && typeof demo === 'object' ? demo : null);
         setError(null);
       } catch (err) {
         setError('Error cargando datos del dashboard');
@@ -167,7 +167,7 @@ export const Dashboard: React.FC = () => {
         <div className="chart-container">
           <h3 className="chart-title">Top 10 Departamentos por Atenciones</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={departamentos}>
+            <BarChart data={departamentos || []}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
                 dataKey="nombre_departamento" 
