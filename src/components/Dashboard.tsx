@@ -119,7 +119,7 @@ export const Dashboard: React.FC = () => {
             <span className="stat-title">Total Atenciones</span>
             <Users className="stat-icon" />
           </div>
-          <div className="stat-value">{estadisticas?.totalAtenciones.toLocaleString()}</div>
+          <div className="stat-value">{estadisticas?.totalAtenciones?.toLocaleString() || '0'}</div>
           <div className="stat-change positive">
             <CheckCircle className="w-4 h-4" />
             <span>Datos actualizados</span>
@@ -131,7 +131,7 @@ export const Dashboard: React.FC = () => {
             <span className="stat-title">Atenciones Hoy</span>
             <Calendar className="stat-icon" />
           </div>
-          <div className="stat-value">{estadisticas?.atencionesHoy.toLocaleString()}</div>
+          <div className="stat-value">{estadisticas?.atencionesHoy?.toLocaleString() || '0'}</div>
           <div className="stat-change positive">
             <TrendingUp className="w-4 h-4" />
             <span>Hoy</span>
@@ -178,7 +178,7 @@ export const Dashboard: React.FC = () => {
               />
               <YAxis />
               <Tooltip 
-                formatter={(value: number) => [value.toLocaleString(), 'Atenciones']}
+                formatter={(value: number) => [value?.toLocaleString() || '0', 'Atenciones']}
                 labelFormatter={(label) => `Departamento: ${label}`}
               />
               <Bar dataKey="total_atenciones" fill="#667eea" />
@@ -205,7 +205,7 @@ export const Dashboard: React.FC = () => {
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => [value.toLocaleString(), 'Casos']} />
+              <Tooltip formatter={(value: number) => [value?.toLocaleString() || '0', 'Casos']} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -221,7 +221,7 @@ export const Dashboard: React.FC = () => {
               <XAxis dataKey="grupo_edad" />
               <YAxis />
               <Tooltip 
-                formatter={(value: number) => [value.toLocaleString(), 'Casos']}
+                formatter={(value: number) => [value?.toLocaleString() || '0', 'Casos']}
                 labelFormatter={(label) => `Grupo: ${label}`}
               />
               <Bar dataKey="cantidad" fill="#4ade80" />
@@ -247,7 +247,7 @@ export const Dashboard: React.FC = () => {
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => [value.toLocaleString(), 'Casos']} />
+              <Tooltip formatter={(value: number) => [value?.toLocaleString() || '0', 'Casos']} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -268,13 +268,13 @@ export const Dashboard: React.FC = () => {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {estadisticas.ultimaActualizacion.total_atenciones.toLocaleString()}
+                {estadisticas?.ultimaActualizacion?.total_atenciones?.toLocaleString() || '0'}
               </div>
               <div className="text-sm text-gray-600">Total atenciones</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">
-                {estadisticas.ultimaActualizacion.atenciones_nuevas.toLocaleString()}
+                {estadisticas?.ultimaActualizacion?.atenciones_nuevas?.toLocaleString() || '0'}
               </div>
               <div className="text-sm text-gray-600">Atenciones nuevas</div>
             </div>

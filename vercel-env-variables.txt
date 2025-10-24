@@ -1,0 +1,7 @@
+NODE_ENV=production
+REACT_APP_API_URL=/api
+DB_HOST=db.jikjuutgacyzlxiczrrh.supabase.co
+DB_USER=postgres
+DB_PASSWORD=otg8PCZ9gb5czKxQ
+DB_PORT=5432
+DB_NAME=postgres
