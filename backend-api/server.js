@@ -11,13 +11,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../build')));
 
-// Configuración de la base de datos PostgreSQL
+// Configuración de la base de datos Aiven PostgreSQL
 const dbConfig = {
-  host: process.env.DB_HOST || 'db.jikjuutgacyzlxiczrrh.supabase.co',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'JX71EllZRtUC8oiJ',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'postgres',
+  host: process.env.DB_HOST || 'pg-3d0fd7d-ayntecnology09-c9f0.f.aivencloud.com',
+  user: process.env.DB_USER || 'avnadmin',
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT || 28195,
+  database: process.env.DB_NAME || 'defaultdb',
   ssl: { rejectUnauthorized: false }
 };
 
