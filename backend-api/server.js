@@ -1,5 +1,5 @@
 const express = require('express');
-const mysql = require('mysql2');
+const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
 
@@ -11,35 +11,28 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend-morbilidad/build')));
 
-// Configuración de la base de datos
+// Configuración de la base de datos PostgreSQL
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  port: process.env.DB_PORT || 3306,
-  database: process.env.DB_NAME || 'morbilidad_urgencias'
+  host: process.env.DB_HOST || 'db.jikjuutgacyzlxiczrrh.supabase.co',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'JX71EllZRtUC8oiJ',
+  port: process.env.DB_PORT || 5432,
+  database: process.env.DB_NAME || 'postgres',
+  ssl: { rejectUnauthorized: false }
 };
 
-// Pool de conexiones
-const pool = mysql.createPool({
-  ...dbConfig,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+// Pool de conexiones PostgreSQL
+const pool = new Pool(dbConfig);
 
-// Función para ejecutar consultas
-const query = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    pool.execute(sql, params, (err, results) => {
-      if (err) {
-        console.error('Error en consulta SQL:', err);
-        reject(err);
-      } else {
-        resolve(results);
-      }
-    });
-  });
+// Función para ejecutar consultas PostgreSQL
+const query = async (sql, params = []) => {
+  try {
+    const result = await pool.query(sql, params);
+    return result.rows;
+  } catch (err) {
+    console.error('Error en consulta SQL:', err);
+    throw err;
+  }
 };
 
 // Rutas de la API
