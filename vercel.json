@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "name": "medcontrol",
+  "builds": [
+    {
+      "src": "frontend-morbilidad/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    },
+    {
+      "src": "backend-api/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend-api/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend-morbilidad/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
