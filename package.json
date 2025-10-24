@@ -1,0 +1,13 @@
+{
+  "name": "medcontrol",
+  "version": "1.0.0",
+  "description": "Sistema de Morbilidad en Urgencias",
+  "scripts": {
+    "build": "cd frontend-morbilidad && npm install && npm run build",
+    "start": "cd frontend-morbilidad && npm start",
+    "dev": "cd frontend-morbilidad && npm start"
+  },
+  "keywords": ["morbilidad", "urgencias", "react", "dashboard"],
+  "author": "Nikolas",
+  "license": "MIT"
+}

@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "medcontrol",
   "builds": [
     {
       "src": "frontend-morbilidad/package.json",
