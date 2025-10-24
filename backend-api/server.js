@@ -1,5 +1,5 @@
 const express = require('express');
-const { Pool } = require('pg');
+const mysql = require('mysql2');
 const cors = require('cors');
 const path = require('path');
 
@@ -11,9 +11,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../build')));
 
-// Configuración de la base de datos Aiven PostgreSQL
+// Configuración de la base de datos MySQL Aiven
 const dbConfig = {
-  host: process.env.DB_HOST || 'pg-3d0fd7d-ayntecnology09-c9f0.f.aivencloud.com',
+  host: process.env.DB_HOST || 'mysql-1d1d642c-ayntecnology09-c9f0.f.aivencloud.com',
   user: process.env.DB_USER || 'avnadmin',
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT || 28195,
@@ -21,14 +21,14 @@ const dbConfig = {
   ssl: { rejectUnauthorized: false }
 };
 
-// Pool de conexiones PostgreSQL
-const pool = new Pool(dbConfig);
+// Pool de conexiones MySQL
+const pool = mysql.createPool(dbConfig);
 
-// Función para ejecutar consultas PostgreSQL
+// Función para ejecutar consultas MySQL
 const query = async (sql, params = []) => {
   try {
-    const result = await pool.query(sql, params);
-    return result.rows;
+    const [rows] = await pool.promise().execute(sql, params);
+    return rows;
   } catch (err) {
     console.error('Error en consulta SQL:', err);
     throw err;
