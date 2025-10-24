@@ -1,0 +1,8 @@
+# Variables de entorno para Vercel con Session Pooler de Supabase
+NODE_ENV=production
+REACT_APP_API_URL=/api
+DB_HOST=aws-0-us-west-1.pooler.supabase.com
+DB_USER=postgres.jikjuutgacyzlxiczrrh
+DB_PASSWORD=JX71EllZRtUC8oiJ
+DB_PORT=6543
+DB_NAME=postgres
