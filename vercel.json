@@ -13,7 +13,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/frontend-morbilidad/build/$1"
+      "dest": "/frontend-morbilidad/build/index.html"
     }
   ]
 }
