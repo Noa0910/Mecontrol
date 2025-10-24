@@ -1,0 +1,17 @@
+2025-09-26 18:54:47,079 - INFO - [SUCCESS] Conexión a MySQL exitosa
+2025-09-26 18:55:21,345 - ERROR - [ERROR] Error obteniendo datos de la API: HTTPSConnectionPool(host='www.datos.gov.co', port=443): Read timed out. (read timeout=30)
+2025-09-26 19:48:39,063 - INFO - [SUCCESS] Conexión a MySQL exitosa
+2025-09-26 19:48:42,697 - INFO - [INFO] Obtenidos 1000 registros. Total: 1000
+2025-09-26 19:48:47,002 - INFO - [INFO] Obtenidos 1000 registros. Total: 2000
+2025-09-26 19:48:50,580 - INFO - [INFO] Obtenidos 1000 registros. Total: 3000
+2025-09-26 19:48:53,391 - INFO - [INFO] Obtenidos 1000 registros. Total: 4000
+2025-09-26 19:48:57,305 - INFO - [INFO] Obtenidos 1000 registros. Total: 5000
+2025-09-26 19:49:02,498 - INFO - [INFO] Obtenidos 1000 registros. Total: 6000
+2025-09-26 19:49:06,789 - INFO - [INFO] Obtenidos 1000 registros. Total: 7000
+2025-09-26 19:49:33,142 - INFO - [INFO] Obtenidos 1000 registros. Total: 8000
+2025-09-26 19:49:55,802 - INFO - [INFO] Obtenidos 1000 registros. Total: 9000
+2025-09-26 19:50:03,314 - INFO - [INFO] Obtenidos 1000 registros. Total: 10000
+2025-09-26 19:50:08,520 - INFO - [INFO] Obtenidos 1000 registros. Total: 11000
+2025-09-26 19:50:45,269 - ERROR - [ERROR] Error obteniendo datos de la API: HTTPSConnectionPool(host='www.datos.gov.co', port=443): Read timed out.
+2025-09-28 19:28:44,409 - INFO - [SUCCESS] Conexión a MySQL exitosa
+2025-09-28 19:28:44,860 - ERROR - [ERROR] Error obteniendo datos de la API: HTTPSConnectionPool(host='www.datos.gov.co', port=443): Max retries exceeded with url: /resource/w6k7-5tme.json?%24limit=1000&%24offset=0 (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000022B53BBDE50>: Failed to resolve 'www.datos.gov.co' ([Errno 11001] getaddrinfo failed)"))
