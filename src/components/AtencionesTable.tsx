@@ -28,7 +28,7 @@ export const AtencionesTable: React.FC = () => {
 
   useEffect(() => {
     cargarAtenciones(currentPage, searchTerm);
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, cargarAtenciones, searchTerm]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

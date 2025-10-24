@@ -29,7 +29,7 @@ export const DiagnosticosPage: React.FC = () => {
 
   useEffect(() => {
     cargarDiagnosticos();
-  }, [limit]);
+  }, [limit, cargarDiagnosticos]);
 
   const diagnosticosFiltrados = diagnosticos.filter(diag => {
     const matchesSearch = diag.nombre_diagnostico.toLowerCase().includes(searchTerm.toLowerCase()) ||
