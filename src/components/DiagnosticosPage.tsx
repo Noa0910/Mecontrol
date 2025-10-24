@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Search, Stethoscope } from 'lucide-react';
 import { api, Diagnostico } from '../services/api';
@@ -13,7 +13,7 @@ export const DiagnosticosPage: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState('all');
   const [limit, setLimit] = useState(20);
 
-  const cargarDiagnosticos = async () => {
+  const cargarDiagnosticos = useCallback(async () => {
     try {
       setLoading(true);
       const data = await api.getDiagnosticos(limit);
@@ -25,7 +25,7 @@ export const DiagnosticosPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit]);
 
   useEffect(() => {
     cargarDiagnosticos();

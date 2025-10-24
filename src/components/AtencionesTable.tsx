@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Download, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { api, Atencion, PaginationInfo } from '../services/api';
 
@@ -11,7 +11,7 @@ export const AtencionesTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
 
-  const cargarAtenciones = async (page: number = 1, search: string = '') => {
+  const cargarAtenciones = useCallback(async (page: number = 1, search: string = '') => {
     try {
       setLoading(true);
       const response = await api.getAtenciones(page, pageSize, search);
@@ -24,7 +24,7 @@ export const AtencionesTable: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pageSize]);
 
   useEffect(() => {
     cargarAtenciones(currentPage, searchTerm);
