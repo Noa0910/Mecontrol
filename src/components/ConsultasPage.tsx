@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Download, Filter, Calendar, MapPin, Users, Stethoscope } from 'lucide-react';
+import { Search, Download, Filter, Calendar, MapPin, Users, Stethoscope, BarChart3, PieChart, TrendingUp, Activity } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell } from 'recharts';
 import { api, Atencion } from '../services/supabaseApi';
 
 interface FiltrosConsulta {
@@ -22,6 +23,8 @@ interface ResultadoConsulta {
     porEps: Array<{ eps: string; cantidad: number; porcentaje: number }>;
   };
 }
+
+const COLORS = ['#667eea', '#4ade80', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'];
 
 const ConsultasPage: React.FC = () => {
   const [filtros, setFiltros] = useState<FiltrosConsulta>({
@@ -236,34 +239,32 @@ const ConsultasPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Consultas Avanzadas
-        </h1>
-        <p className="text-gray-600">
-          Filtra y analiza los datos de morbilidad según tus criterios específicos
-        </p>
+    <div className="dashboard">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Consultas Avanzadas</h1>
+        <p className="text-gray-600">Filtra y analiza los datos de morbilidad según tus criterios específicos</p>
       </div>
 
       {/* Panel de Filtros */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div className="flex items-center mb-4">
-          <Filter className="w-5 h-5 text-blue-600 mr-2" />
-          <h2 className="text-xl font-semibold text-gray-900">Filtros de Consulta</h2>
+      <div className="card mb-6">
+        <div className="card-header">
+          <h3 className="card-title flex items-center">
+            <Filter className="w-6 h-6 mr-3 text-blue-600" />
+            Filtros de Consulta
+          </h3>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
           {/* Departamento */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <MapPin className="w-4 h-4 inline mr-1" />
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <MapPin className="w-5 h-5 mr-2 text-blue-600" />
               Departamento
             </label>
             <select
               value={filtros.departamento}
               onChange={(e) => setFiltros({...filtros, departamento: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="form-input"
             >
               <option value="">Todos los departamentos</option>
               {opciones.departamentos.map(depto => (
@@ -273,15 +274,15 @@ const ConsultasPage: React.FC = () => {
           </div>
 
           {/* Sexo */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Users className="w-4 h-4 inline mr-1" />
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <Users className="w-5 h-5 mr-2 text-pink-600" />
               Sexo
             </label>
             <select
               value={filtros.sexo}
               onChange={(e) => setFiltros({...filtros, sexo: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="form-input"
             >
               <option value="">Todos</option>
               <option value="M">Masculino</option>
@@ -290,9 +291,9 @@ const ConsultasPage: React.FC = () => {
           </div>
 
           {/* Rango de Edad */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Calendar className="w-4 h-4 inline mr-1" />
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <Calendar className="w-5 h-5 mr-2 text-green-600" />
               Rango de Edad
             </label>
             <div className="flex space-x-2">
@@ -301,28 +302,29 @@ const ConsultasPage: React.FC = () => {
                 placeholder="Mín"
                 value={filtros.edadMin || ''}
                 onChange={(e) => setFiltros({...filtros, edadMin: parseInt(e.target.value) || 0})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="form-input"
               />
+              <span className="flex items-center text-gray-500">-</span>
               <input
                 type="number"
                 placeholder="Máx"
                 value={filtros.edadMax || ''}
                 onChange={(e) => setFiltros({...filtros, edadMax: parseInt(e.target.value) || 100})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="form-input"
               />
             </div>
           </div>
 
           {/* EPS */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Stethoscope className="w-4 h-4 inline mr-1" />
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <Stethoscope className="w-5 h-5 mr-2 text-purple-600" />
               EPS
             </label>
             <select
               value={filtros.eps}
               onChange={(e) => setFiltros({...filtros, eps: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="form-input"
             >
               <option value="">Todas las EPS</option>
               {opciones.eps.map(eps => (
@@ -332,33 +334,35 @@ const ConsultasPage: React.FC = () => {
           </div>
 
           {/* Fecha Inicio */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <Calendar className="w-5 h-5 mr-2 text-orange-600" />
               Fecha Inicio
             </label>
             <input
               type="date"
               value={filtros.fechaInicio}
               onChange={(e) => setFiltros({...filtros, fechaInicio: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="form-input"
             />
           </div>
 
           {/* Fecha Fin */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <Calendar className="w-5 h-5 mr-2 text-red-600" />
               Fecha Fin
             </label>
             <input
               type="date"
               value={filtros.fechaFin}
               onChange={(e) => setFiltros({...filtros, fechaFin: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="form-input"
             />
           </div>
         </div>
 
-        <div className="flex justify-end space-x-4">
+        <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
           <button
             onClick={() => setFiltros({
               departamento: '',
@@ -369,16 +373,17 @@ const ConsultasPage: React.FC = () => {
               fechaInicio: '',
               fechaFin: ''
             })}
-            className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+            className="btn btn-secondary"
           >
+            <Filter className="w-4 h-4" />
             Limpiar Filtros
           </button>
           <button
             onClick={ejecutarConsulta}
             disabled={cargando}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center"
+            className="btn btn-primary"
           >
-            <Search className="w-4 h-4 mr-2" />
+            <Search className="w-4 h-4" />
             {cargando ? 'Consultando...' : 'Ejecutar Consulta'}
           </button>
         </div>
@@ -387,132 +392,216 @@ const ConsultasPage: React.FC = () => {
       {/* Resultados */}
       {resultados && (
         <div className="space-y-6">
-          {/* Resumen */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-gray-900">
-                Resultados de la Consulta
-              </h3>
-              <button
-                onClick={exportarCSV}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Exportar CSV
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">
-                  {resultados.totalAtenciones.toLocaleString()}
-                </div>
-                <div className="text-sm text-blue-800">Total Atenciones</div>
+          {/* Estadísticas principales */}
+          <div className="stats-grid">
+            <div className="stat-card primary">
+              <div className="stat-header">
+                <span className="stat-title">Total Atenciones</span>
+                <Users className="stat-icon" />
+              </div>
+              <div className="stat-value">{resultados.totalAtenciones.toLocaleString()}</div>
+              <div className="stat-change positive">
+                <Activity className="w-4 h-4" />
+                <span>Resultados filtrados</span>
               </div>
             </div>
 
-            {/* Gráficos de Resumen */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Por Sexo */}
-              <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Distribución por Sexo</h4>
-                <div className="space-y-2">
-                  {resultados.resumen.porSexo.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">{item.sexo}</span>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-32 bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full" 
-                            style={{ width: `${item.porcentaje}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-sm font-medium text-gray-900">
-                          {item.cantidad} ({item.porcentaje}%)
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            <div className="stat-card success">
+              <div className="stat-header">
+                <span className="stat-title">Femenino</span>
+                <Users className="stat-icon" />
               </div>
+              <div className="stat-value">
+                {resultados.resumen.porSexo.find(s => s.sexo === 'Femenino')?.cantidad || 0}
+              </div>
+              <div className="stat-change">
+                <span>
+                  {resultados.resumen.porSexo.find(s => s.sexo === 'Femenino')?.porcentaje || 0}%
+                </span>
+              </div>
+            </div>
 
-              {/* Por Edad */}
-              <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Distribución por Edad</h4>
-                <div className="space-y-2">
-                  {resultados.resumen.porEdad.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">{item.grupo}</span>
-                      <span className="text-sm font-medium text-gray-900">{item.cantidad}</span>
-                    </div>
-                  ))}
-                </div>
+            <div className="stat-card warning">
+              <div className="stat-header">
+                <span className="stat-title">Masculino</span>
+                <Users className="stat-icon" />
+              </div>
+              <div className="stat-value">
+                {resultados.resumen.porSexo.find(s => s.sexo === 'Masculino')?.cantidad || 0}
+              </div>
+              <div className="stat-change">
+                <span>
+                  {resultados.resumen.porSexo.find(s => s.sexo === 'Masculino')?.porcentaje || 0}%
+                </span>
+              </div>
+            </div>
+
+            <div className="stat-card danger">
+              <div className="stat-header">
+                <span className="stat-title">Departamentos</span>
+                <MapPin className="stat-icon" />
+              </div>
+              <div className="stat-value">{resultados.resumen.porDepartamento.length}</div>
+              <div className="stat-change">
+                <span>Con datos</span>
               </div>
             </div>
           </div>
 
+          {/* Gráficos */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Distribución por Sexo */}
+            <div className="chart-container">
+              <h3 className="chart-title flex items-center">
+                <PieChart className="w-6 h-6 mr-3 text-pink-600" />
+                Distribución por Sexo
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <RechartsPieChart>
+                  <Pie
+                    data={resultados.resumen.porSexo}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ sexo, porcentaje }) => `${sexo}: ${porcentaje}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="cantidad"
+                  >
+                    {resultados.resumen.porSexo.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value: number) => [value?.toLocaleString() || '0', 'Casos']} />
+                </RechartsPieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Distribución por Edad */}
+            <div className="chart-container">
+              <h3 className="chart-title flex items-center">
+                <BarChart3 className="w-6 h-6 mr-3 text-green-600" />
+                Distribución por Grupos de Edad
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={resultados.resumen.porEdad}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="grupo" />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value: number) => [value?.toLocaleString() || '0', 'Casos']}
+                    labelFormatter={(label) => `Grupo: ${label}`}
+                  />
+                  <Bar dataKey="cantidad" fill="#4ade80" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Top Departamentos y EPS */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Top Departamentos */}
+            <div className="chart-container">
+              <h3 className="chart-title flex items-center">
+                <TrendingUp className="w-6 h-6 mr-3 text-blue-600" />
+                Top Departamentos
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={resultados.resumen.porDepartamento.slice(0, 10)}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="departamento" 
+                    angle={-45}
+                    textAnchor="end"
+                    height={100}
+                    fontSize={12}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value: number) => [value?.toLocaleString() || '0', 'Atenciones']}
+                    labelFormatter={(label) => `Departamento: ${label}`}
+                  />
+                  <Bar dataKey="cantidad" fill="#667eea" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Top EPS */}
+            <div className="chart-container">
+              <h3 className="chart-title flex items-center">
+                <Stethoscope className="w-6 h-6 mr-3 text-purple-600" />
+                Top EPS
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={resultados.resumen.porEps.slice(0, 10)}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="eps" 
+                    angle={-45}
+                    textAnchor="end"
+                    height={100}
+                    fontSize={12}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value: number) => [value?.toLocaleString() || '0', 'Atenciones']}
+                    labelFormatter={(label) => `EPS: ${label}`}
+                  />
+                  <Bar dataKey="cantidad" fill="#8b5cf6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
           {/* Tabla de Atenciones */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              Detalle de Atenciones ({resultados.atenciones.length})
-            </h3>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title flex items-center">
+                <Users className="w-6 h-6 mr-3 text-indigo-600" />
+                Detalle de Atenciones ({resultados.atenciones.length})
+              </h3>
+              <button
+                onClick={exportarCSV}
+                className="btn btn-primary"
+              >
+                <Download className="w-4 h-4" />
+                Exportar CSV
+              </button>
+            </div>
+            
+            <div className="table-container">
+              <table className="table">
+                <thead>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ID
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Fecha
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Sexo
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Edad
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Diagnóstico
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Departamento
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      EPS
-                    </th>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Sexo</th>
+                    <th>Edad</th>
+                    <th>Diagnóstico</th>
+                    <th>Departamento</th>
+                    <th>EPS</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {resultados.atenciones.slice(0, 100).map((atencion) => (
+                <tbody>
+                  {resultados.atenciones.slice(0, 100).map((atencion, index) => (
                     <tr key={atencion.id_atencion}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {atencion.id_atencion}
+                      <td className="font-bold">#{atencion.id_atencion}</td>
+                      <td>{new Date(atencion.fecha_atencion).toLocaleDateString()}</td>
+                      <td>
+                        <span className={`badge ${atencion.sexo === 'M' ? 'badge.primary' : 'badge.warning'}`}>
+                          {atencion.sexo === 'M' ? 'Masculino' : 'Femenino'}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {new Date(atencion.fecha_atencion).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {atencion.sexo === 'M' ? 'Masculino' : 'Femenino'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {atencion.edad}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                        {atencion.nombre_diagnostico}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {atencion.nombre_departamento}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                        {atencion.nombre_eapb}
-                      </td>
+                      <td className="font-bold">{atencion.edad} años</td>
+                      <td className="max-w-xs truncate">{atencion.nombre_diagnostico}</td>
+                      <td>{atencion.nombre_departamento}</td>
+                      <td className="max-w-xs truncate">{atencion.nombre_eapb}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
               {resultados.atenciones.length > 100 && (
-                <div className="text-center py-4 text-gray-500">
+                <div className="text-center py-4 text-gray-600 font-semibold">
                   Mostrando 100 de {resultados.atenciones.length} atenciones
                 </div>
               )}
