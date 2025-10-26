@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { api } from '../services/supabaseApi';
+import { useDataContext } from '../contexts/DataContext';
 
 interface Estadisticas {
   totalAtenciones: number;
@@ -56,6 +57,7 @@ interface Demograficas {
 const COLORS = ['#667eea', '#4ade80', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
 export const Dashboard: React.FC = () => {
+  const { dataType } = useDataContext();
   const [estadisticas, setEstadisticas] = useState<Estadisticas | null>(null);
   const [departamentos, setDepartamentos] = useState<DepartamentoStats[]>([]);
   const [demograficas, setDemograficas] = useState<Demograficas | null>(null);
@@ -66,10 +68,12 @@ export const Dashboard: React.FC = () => {
     const cargarDatos = async () => {
       try {
         setLoading(true);
+        
+        // Obtener datos con filtro por tipo
         const [estats, deptos, demo] = await Promise.all([
-          api.getEstadisticas(),
-          api.getEstadisticasDepartamentos(),
-          api.getEstadisticasDemograficas()
+          api.getEstadisticas(dataType),
+          api.getEstadisticasDepartamentos(dataType),
+          api.getEstadisticasDemograficas(dataType)
         ]);
         
         setEstadisticas(estats);
@@ -85,7 +89,7 @@ export const Dashboard: React.FC = () => {
     };
 
     cargarDatos();
-  }, []);
+  }, [dataType]);
 
   if (loading) {
     return (

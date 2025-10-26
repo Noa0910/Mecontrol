@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Download, Filter, Calendar, MapPin, Users, Stethoscope, BarChart3, PieChart, TrendingUp, Activity } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell } from 'recharts';
 import { api, Atencion } from '../services/supabaseApi';
+import { useDataContext } from '../contexts/DataContext';
 
 interface FiltrosConsulta {
   departamento: string;
@@ -27,6 +28,7 @@ interface ResultadoConsulta {
 const COLORS = ['#667eea', '#4ade80', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'];
 
 const ConsultasPage: React.FC = () => {
+  const { dataType: tipo } = useDataContext();
   const [filtros, setFiltros] = useState<FiltrosConsulta>({
     departamento: '',
     sexo: '',
@@ -75,8 +77,13 @@ const ConsultasPage: React.FC = () => {
       // Obtener todas las atenciones
       const { atenciones } = await api.getAtenciones(1, 50000);
       
-      // Aplicar filtros
-      let atencionesFiltradas = atenciones;
+      // Filtrar por tipo de datos (global o empresa)
+      let atencionesFiltradas = atenciones.filter(a => {
+        // Si no hay campo tipo_datos, asumir que son datos globales
+        return (a as any).tipo_datos === tipo || (!(a as any).tipo_datos && tipo === 'global');
+      });
+      
+      // Aplicar filtros adicionales
 
       if (filtros.departamento) {
         atencionesFiltradas = atencionesFiltradas.filter(a => 
@@ -238,11 +245,16 @@ const ConsultasPage: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  const titulo = tipo === 'global' ? 'Consultas Globales' : 'Consultas de Empresa';
+  const descripcion = tipo === 'global' 
+    ? 'Filtra y analiza los datos globales de morbilidad según tus criterios específicos' 
+    : 'Filtra y analiza los datos de empresa de morbilidad según tus criterios específicos';
+
   return (
     <div className="dashboard">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Consultas Avanzadas</h1>
-        <p className="text-gray-600">Filtra y analiza los datos de morbilidad según tus criterios específicos</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{titulo}</h1>
+        <p className="text-gray-600">{descripcion}</p>
       </div>
 
       {/* Panel de Filtros */}
@@ -360,6 +372,157 @@ const ConsultasPage: React.FC = () => {
               className="form-input"
             />
           </div>
+            </div>
+
+        <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+          <button
+            onClick={() => setFiltros({
+              departamento: '',
+              sexo: '',
+              edadMin: 0,
+              edadMax: 100,
+              eps: '',
+              fechaInicio: '',
+              fechaFin: ''
+            })}
+            className="btn btn-secondary"
+          >
+            <Filter className="w-4 h-4" />
+            Limpiar Filtros
+          </button>
+          <button
+            onClick={ejecutarConsulta}
+            disabled={cargando}
+            className="btn btn-primary"
+          >
+            <Search className="w-4 h-4" />
+            {cargando ? 'Consultando...' : 'Ejecutar Consulta'}
+          </button>
+            </div>
+          </div>
+
+      {/* Panel de Filtros */}
+      <div className="card mb-6">
+        <div className="card-header">
+          <h3 className="card-title flex items-center">
+            <Filter className="w-6 h-6 mr-3 text-blue-600" />
+            Filtros de Consulta
+            <span className={`ml-3 px-3 py-1 rounded-full text-xs font-semibold ${
+              tipo === 'global' 
+                ? 'bg-gray-100 text-gray-700' 
+                : 'bg-blue-100 text-blue-700'
+            }`}>
+              {tipo === 'global' ? '~32K registros' : '~3K registros'}
+            </span>
+          </h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          {/* Departamento */}
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <MapPin className="w-5 h-5 mr-2 text-blue-600" />
+              Departamento
+            </label>
+            <select
+              value={filtros.departamento}
+              onChange={(e) => setFiltros({...filtros, departamento: e.target.value})}
+              className="form-input"
+            >
+              <option value="">Todos los departamentos</option>
+              {opciones.departamentos.map(depto => (
+                <option key={depto} value={depto}>{depto}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sexo */}
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <Users className="w-5 h-5 mr-2 text-pink-600" />
+              Sexo
+            </label>
+            <select
+              value={filtros.sexo}
+              onChange={(e) => setFiltros({...filtros, sexo: e.target.value})}
+              className="form-input"
+            >
+              <option value="">Todos</option>
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+            </select>
+          </div>
+
+          {/* Rango de Edad */}
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <Calendar className="w-5 h-5 mr-2 text-green-600" />
+              Rango de Edad
+            </label>
+            <div className="flex space-x-2">
+                <input
+                  type="number"
+                  placeholder="Mín"
+                  value={filtros.edadMin || ''}
+                  onChange={(e) => setFiltros({...filtros, edadMin: parseInt(e.target.value) || 0})}
+                className="form-input"
+                />
+              <span className="flex items-center text-gray-500">-</span>
+                <input
+                  type="number"
+                  placeholder="Máx"
+                  value={filtros.edadMax || ''}
+                  onChange={(e) => setFiltros({...filtros, edadMax: parseInt(e.target.value) || 100})}
+                className="form-input"
+                />
+            </div>
+          </div>
+
+          {/* EPS */}
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <Stethoscope className="w-5 h-5 mr-2 text-purple-600" />
+              EPS
+            </label>
+            <select
+              value={filtros.eps}
+              onChange={(e) => setFiltros({...filtros, eps: e.target.value})}
+              className="form-input"
+            >
+              <option value="">Todas las EPS</option>
+              {opciones.eps.map(eps => (
+                <option key={eps} value={eps}>{eps}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Fecha Inicio */}
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <Calendar className="w-5 h-5 mr-2 text-orange-600" />
+              Fecha Inicio
+            </label>
+            <input
+              type="date"
+              value={filtros.fechaInicio}
+              onChange={(e) => setFiltros({...filtros, fechaInicio: e.target.value})}
+              className="form-input"
+            />
+          </div>
+
+          {/* Fecha Fin */}
+          <div className="form-group">
+            <label className="form-label flex items-center">
+              <Calendar className="w-5 h-5 mr-2 text-red-600" />
+              Fecha Fin
+            </label>
+            <input
+              type="date"
+              value={filtros.fechaFin}
+              onChange={(e) => setFiltros({...filtros, fechaFin: e.target.value})}
+              className="form-input"
+            />
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
@@ -398,13 +561,13 @@ const ConsultasPage: React.FC = () => {
               <div className="stat-header">
                 <span className="stat-title">Total Atenciones</span>
                 <Users className="stat-icon" />
-              </div>
+                    </div>
               <div className="stat-value">{resultados.totalAtenciones.toLocaleString()}</div>
               <div className="stat-change positive">
                 <Activity className="w-4 h-4" />
                 <span>Resultados filtrados</span>
+                </div>
               </div>
-            </div>
 
             <div className="stat-card success">
               <div className="stat-header">
@@ -413,28 +576,28 @@ const ConsultasPage: React.FC = () => {
               </div>
               <div className="stat-value">
                 {resultados.resumen.porSexo.find(s => s.sexo === 'Femenino')?.cantidad || 0}
-              </div>
+                  </div>
               <div className="stat-change">
                 <span>
                   {resultados.resumen.porSexo.find(s => s.sexo === 'Femenino')?.porcentaje || 0}%
                 </span>
+                </div>
               </div>
-            </div>
 
             <div className="stat-card warning">
               <div className="stat-header">
                 <span className="stat-title">Masculino</span>
                 <Users className="stat-icon" />
-              </div>
+                  </div>
               <div className="stat-value">
                 {resultados.resumen.porSexo.find(s => s.sexo === 'Masculino')?.cantidad || 0}
-              </div>
+                        </div>
               <div className="stat-change">
                 <span>
                   {resultados.resumen.porSexo.find(s => s.sexo === 'Masculino')?.porcentaje || 0}%
-                </span>
-              </div>
-            </div>
+                        </span>
+                      </div>
+                    </div>
 
             <div className="stat-card danger">
               <div className="stat-header">
@@ -445,8 +608,8 @@ const ConsultasPage: React.FC = () => {
               <div className="stat-change">
                 <span>Con datos</span>
               </div>
-            </div>
-          </div>
+                </div>
+              </div>
 
           {/* Gráficos */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -475,7 +638,7 @@ const ConsultasPage: React.FC = () => {
                   <Tooltip formatter={(value: number) => [value?.toLocaleString() || '0', 'Casos']} />
                 </RechartsPieChart>
               </ResponsiveContainer>
-            </div>
+                  </div>
 
             {/* Distribución por Edad */}
             <div className="chart-container">
@@ -495,8 +658,8 @@ const ConsultasPage: React.FC = () => {
                   <Bar dataKey="cantidad" fill="#4ade80" />
                 </BarChart>
               </ResponsiveContainer>
-            </div>
-          </div>
+                </div>
+              </div>
 
           {/* Top Departamentos y EPS */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

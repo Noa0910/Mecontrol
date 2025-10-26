@@ -86,12 +86,23 @@ export interface EvolucionTemporal {
 
 // Clase API para manejar todas las consultas a Supabase
 class SupabaseAPI {
+  // Helper para crear filtro por tipo de datos
+  private createDataTypeFilter(dataType?: 'global' | 'empresa') {
+    if (!dataType || dataType === 'global') {
+      return (query: any) => query.or('tipo_datos.is.null,tipo_datos.eq.global');
+    }
+    return (query: any) => query.eq('tipo_datos', 'empresa');
+  }
+
   // Obtener estadísticas generales
-  async getEstadisticas(): Promise<Estadisticas> {
+  async getEstadisticas(dataType?: 'global' | 'empresa'): Promise<Estadisticas> {
     try {
+      const filter = this.createDataTypeFilter(dataType);
+      
       // Usar count para obtener totales sin cargar todos los datos
+      const atencionesQuery = filter(supabase.from('atenciones_urgencias').select('*', { count: 'exact', head: true }));
       const [atencionesCount, departamentosCount, municipiosCount, diagnosticosCount] = await Promise.all([
-        supabase.from('atenciones_urgencias').select('*', { count: 'exact', head: true }),
+        atencionesQuery,
         supabase.from('departamentos').select('*', { count: 'exact', head: true }),
         supabase.from('municipios').select('*', { count: 'exact', head: true }),
         supabase.from('diagnosticos').select('*', { count: 'exact', head: true })
@@ -99,11 +110,12 @@ class SupabaseAPI {
 
       // Obtener atenciones de hoy usando una consulta específica
       const today = new Date().toISOString().split('T')[0];
-      const { count: atencionesHoyCount } = await supabase
+      const atencionesHoyQuery = supabase
         .from('atenciones_urgencias')
         .select('*', { count: 'exact', head: true })
         .gte('fecha_atencion', today)
         .lt('fecha_atencion', today + 'T23:59:59');
+      const { count: atencionesHoyCount } = await filter(atencionesHoyQuery);
 
       return {
         totalAtenciones: atencionesCount.count || 0,
@@ -120,9 +132,10 @@ class SupabaseAPI {
   }
 
   // Obtener estadísticas por departamentos
-  async getEstadisticasDepartamentos(): Promise<DepartamentoStats[]> {
+  async getEstadisticasDepartamentos(dataType?: 'global' | 'empresa'): Promise<DepartamentoStats[]> {
     try {
-      const { data, error } = await supabase
+      const filter = this.createDataTypeFilter(dataType);
+      const query = supabase
         .from('atenciones_urgencias')
         .select(`
           id_atencion,
@@ -130,6 +143,7 @@ class SupabaseAPI {
           edad,
           id_municipio
         `);
+      const { data, error } = await filter(query);
 
       if (error) throw error;
 
@@ -201,11 +215,13 @@ class SupabaseAPI {
   }
 
   // Obtener estadísticas demográficas
-  async getEstadisticasDemograficas(): Promise<any> {
+  async getEstadisticasDemograficas(dataType?: 'global' | 'empresa'): Promise<any> {
     try {
-      const { data: atenciones, error } = await supabase
+      const filter = this.createDataTypeFilter(dataType);
+      const query = supabase
         .from('atenciones_urgencias')
         .select('sexo, edad, id_regimen');
+      const { data: atenciones, error } = await filter(query);
 
       if (error) throw error;
 
