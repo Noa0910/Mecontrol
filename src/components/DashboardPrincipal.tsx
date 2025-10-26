@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Globe, Building2, ArrowRight, BarChart3, TrendingUp, AlertCircle, Activity } from 'lucide-react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
+import { Globe, Building2, ArrowRight, BarChart3, AlertCircle } from 'lucide-react';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import { useDataContext } from '../contexts/DataContext';
 import { api } from '../services/supabaseApi';
-
-const CHART_COLORS = ['#10b981', '#059669', '#34d399', '#6ee7b7', '#a7f3d0'];
 
 export const DashboardPrincipal: React.FC = () => {
   const navigate = useNavigate();
@@ -28,20 +26,13 @@ export const DashboardPrincipal: React.FC = () => {
           ? ((empresa.totalAtenciones / global.totalAtenciones) * 100).toFixed(2)
           : '0';
 
-        const diagnosticos = await Promise.all([
-          api.getDiagnosticos(5)
-        ]);
-
         // Obtener más datos para el análisis
-        const [globalDeptos, empresaDeptos, globalDemo, empresaDemo] = await Promise.all([
-          api.getEstadisticasDepartamentos('global'),
+        const [empresaDeptos, empresaDemo] = await Promise.all([
           api.getEstadisticasDepartamentos('empresa'),
-          api.getEstadisticasDemograficas('global'),
           api.getEstadisticasDemograficas('empresa')
         ]);
 
         // Calcular insights
-        const topDiagnosticoEmpresa = empresa.totalDiagnosticos;
         const promedioEdad = empresaDemo.porEdad || [];
         
         // Causas más comunes basadas en departamentos
